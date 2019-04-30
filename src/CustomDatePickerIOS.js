@@ -16,6 +16,7 @@ export default class CustomDatePickerIOS extends React.PureComponent {
     cancelTextStyle: PropTypes.any,
     confirmTextIOS: PropTypes.string,
     confirmTextStyle: PropTypes.any,
+    setMaxDefaultDate: PropTypes.bool,
     contentContainerStyleIOS: PropTypes.any,
     customCancelButtonIOS: PropTypes.node,
     customConfirmButtonIOS: PropTypes.node,
@@ -47,6 +48,7 @@ export default class CustomDatePickerIOS extends React.PureComponent {
     hideTitleContainerIOS: false,
     isVisible: false,
     mode: "date",
+    setMaxDefaultDate: false,
     neverDisableConfirmIOS: false,
     onHideAfterConfirm: () => {},
     onDateChange: () => {},
@@ -55,17 +57,17 @@ export default class CustomDatePickerIOS extends React.PureComponent {
   };
 
   state = {
-    date: this.props.date,
+    date: this.props.setMaxDefaultDate ? this.props.maximumDate : this.props.date,
     userIsInteractingWithPicker: false,
     minuteInterval: this.props.minuteInterval || 1
   };
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.date !== nextProps.date) {
+    if(this.props.date.toString() !== nextProps.date.toString()){
       this.setState({
         date: nextProps.date
       });
-    }
+    } 
   }
 
   handleCancel = () => {
