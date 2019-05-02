@@ -56,15 +56,23 @@ export default class CustomDatePickerIOS extends React.PureComponent {
     titleIOS: "Pick a date"
   };
 
+
   state = {
-    date: this.props.setMaxDefaultDate ? this.props.maximumDate : this.props.date,
+    date: this.setDefaultDateTime(),
     userIsInteractingWithPicker: false,
+    dateChanged: false,
     minuteInterval: this.props.minuteInterval || 1
   };
 
+  setDefaultDateTime(){
+    const { setMaxDefaultDate, maximumDate, date } = this.props;
+    return setMaxDefaultDate ? maximumDate : date
+  }
+
   componentWillReceiveProps(nextProps) {
-    if(this.props.date.toString() !== nextProps.date.toString()){
+    if(String(this.props.date) !== String(nextProps.date)){
       this.setState({
+        dateChanged: true,
         date: nextProps.date
       });
     } 
@@ -83,8 +91,10 @@ export default class CustomDatePickerIOS extends React.PureComponent {
   };
 
   resetDate = () => {
+    const { dateChanged } = this.state;
+    const { setMaxDefaultDate, maximumDate, date } = this.props;
     this.setState({
-      date: this.props.date
+      date: !dateChanged && setMaxDefaultDate ? maximumDate :  date
     });
   };
 
@@ -107,7 +117,6 @@ export default class CustomDatePickerIOS extends React.PureComponent {
   };
 
   handleUserTouchInit = () => {
-    // custom date picker shouldn't change this param
     if (!this.props.customDatePickerIOS) {
       this.setState({
         userIsInteractingWithPicker: true
@@ -148,15 +157,6 @@ export default class CustomDatePickerIOS extends React.PureComponent {
       </View>
     );
     let confirmButton;
-
-    // Interested PR: https://github.com/mmazzarolo/react-native-modal-datetime-picker/pull/40
-    // Issue on React-Native: https://github.com/facebook/react-native/issues/8169
-    // Up until now when the user interacted with the picker, if he tapped on the confirm button,
-    // the state was not yet changed and thus the picked value would be old and miss-leading.
-    // DatePickerIOS does not update on the fly, and before it even manages to dispatch an update,
-    // our component is unmounted and thus the state is lost.
-    // We no longer allow our user to tap the confirm button unless the picker is still.
-    // They can always tap the cancel button anyway.
     if (customConfirmButtonIOS) {
       if (
         customConfirmButtonWhileInteractingIOS &&
@@ -210,6 +210,7 @@ export default class CustomDatePickerIOS extends React.PureComponent {
               date={this.state.date}
               onDateChange={this.handleDateChange}
             />
+            
           </View>
           <TouchableHighlight
             style={styles.confirmButton}
