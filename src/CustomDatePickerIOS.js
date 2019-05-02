@@ -7,6 +7,7 @@ import {
   TouchableHighlight,
   View
 } from "react-native";
+import Moment from 'moment';
 import ReactNativeModal from "react-native-modal";
 import { isIphoneX } from "./utils";
 
@@ -85,8 +86,11 @@ export default class CustomDatePickerIOS extends React.PureComponent {
   };
 
   handleConfirm = () => {
+    const { mode, maximumDate, onConfirm } = this.props;
+    const { date } = this.state;
     this.confirmed = true;
-    this.props.onConfirm(this.state.date);
+    const isAfter = Moment(maximumDate).isAfter(date);
+    onConfirm(!isAfter && mode === 'time' ? maximumDate : date);
     this.resetDate();
   };
 
