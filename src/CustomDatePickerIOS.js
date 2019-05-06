@@ -59,7 +59,7 @@ export default class CustomDatePickerIOS extends React.PureComponent {
 
 
   state = {
-    date: this.props.date,
+    date: this.props.setMaxDefaultDate ? new Date() : this.props.date,
     userIsInteractingWithPicker: false,
     minuteInterval: this.props.minuteInterval || 1
   };
@@ -79,7 +79,7 @@ export default class CustomDatePickerIOS extends React.PureComponent {
   };
 
   handleConfirm = () => {
-    const { mode, maximumDate, onConfirm } = this.props;
+    const { onConfirm } = this.props;
     const { date } = this.state;
     this.confirmed = true;
     onConfirm(date);
