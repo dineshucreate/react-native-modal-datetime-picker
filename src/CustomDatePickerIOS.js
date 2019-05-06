@@ -59,21 +59,14 @@ export default class CustomDatePickerIOS extends React.PureComponent {
 
 
   state = {
-    date: this.setDefaultDateTime(),
+    date: this.props.date,
     userIsInteractingWithPicker: false,
-    dateChanged: false,
     minuteInterval: this.props.minuteInterval || 1
   };
-
-  setDefaultDateTime(){
-    const { setMaxDefaultDate, maximumDate, date } = this.props;
-    return setMaxDefaultDate ? maximumDate : date
-  }
 
   componentWillReceiveProps(nextProps) {
     if(String(this.props.date) !== String(nextProps.date)){
       this.setState({
-        dateChanged: true,
         date: nextProps.date
       });
     } 
@@ -89,17 +82,13 @@ export default class CustomDatePickerIOS extends React.PureComponent {
     const { mode, maximumDate, onConfirm } = this.props;
     const { date } = this.state;
     this.confirmed = true;
-    const isAfter = Moment(maximumDate).isAfter(date);
-    onConfirm(!isAfter && mode === 'time' ? maximumDate : date);
+    onConfirm(date);
     this.resetDate();
   };
 
   resetDate = () => {
-    const { dateChanged } = this.state;
-    const { setMaxDefaultDate, maximumDate, date } = this.props;
-    this.setState({
-      date: !dateChanged && setMaxDefaultDate ? maximumDate :  date
-    });
+    const { date } = this.props;
+    this.setState({date});
   };
 
   handleModalShow = () => {
